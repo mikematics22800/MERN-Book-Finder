@@ -11,15 +11,14 @@ import {
   Col
 } from 'react-bootstrap';
 
-import { getMe, deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
-  const [title, setTitle] = useState('');
-
   const {loading, data} = useQuery(GET_ME)
+  const [removeBook] = useMutation(REMOVE_BOOK);
+
 
   useEffect(() => {
     if (data) {
@@ -36,17 +35,10 @@ const SavedBooks = () => {
     }
 
     try {
-      const [removeBook, { error, data }] = useMutation(REMOVE_BOOK);
-      const response = await removeBook({
+      const user = await removeBook({
         variables: { bookId }
       });
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
-
-      const updatedUser = await response.json();
-      setUserData(updatedUser);
+      setUserData(user);
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
     } catch (err) {
