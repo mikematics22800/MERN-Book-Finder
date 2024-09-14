@@ -13,9 +13,7 @@ const typeDefs = `
   }
 
   type Query {
-    books(username: String): [Book]!
-    user(userId: ID!): User
-    me: User
+    me(userId: ID!): User
   }
 
   type Mutation {

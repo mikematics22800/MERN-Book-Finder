@@ -1,11 +1,14 @@
-const { User, Book } = require('../models');
+const { User } = require('../models');
 const { signToken, AuthenticationError } = require('../utils/auth');
 
 const resolvers = {
   Query: {
-    getBooks: async (parent, { username }) => {
-      const params = username ? { username } : {};
-      return Book.find(params).sort({ createdAt: -1 });
+    me: async (parent, { userId }) => {
+      const user = await User.findOne({ _id: userId});
+      if (!user) {
+        throw new AuthenticationError;
+      }
+      return user;
     }
   },
   Mutation: {
@@ -26,7 +29,7 @@ const resolvers = {
       return { token, user };
     },
     addUser: async (parent, { name, email, password }) => {
-      const user = await User.create({ name, email, password });
+      const user = await User.create({ name, email, password }); 
       const token = signToken(user);
 
       return { token, user };
