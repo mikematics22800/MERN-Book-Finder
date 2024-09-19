@@ -35,13 +35,13 @@ const resolvers = {
       return { token, user };
     },
     // Add a third argument to the resolver to access data in our `context`
-    saveGame: async (parent, { userId, game }, context) => {
+    saveBook: async (parent, { userId, book }, context) => {
       // If context has a `user` property, that means the user executing this mutation has a valid JWT and is logged in
       if (context.user) {
         return User.findOneAndUpdate(
           { _id: userId },
           {
-            $addToSet: { games: game },
+            $addToSet: { books: book },
           },
           {
             new: true,
@@ -52,12 +52,12 @@ const resolvers = {
       // If user attempts to execute this mutation and isn't logged in, throw an error
       throw AuthenticationError;
     },
-    // Make it so a logged in user can only remove a game from their own user
-    removeGame: async (parent, { game }, context) => {
+    // Make it so a logged in user can only remove a book from their own user
+    removeBook: async (parent, { book }, context) => {
       if (context.user) {
         return User.findOneAndUpdate(
           { _id: context.user._id },
-          { $pull: { games: game } },
+          { $pull: { books: book } },
           { new: true }
         );
       }
